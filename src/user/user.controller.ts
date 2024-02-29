@@ -84,7 +84,6 @@ export class UserController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto)
   }

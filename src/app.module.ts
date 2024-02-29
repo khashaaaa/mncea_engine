@@ -14,8 +14,8 @@ import { PageModule } from './page/page.module'
 import { CompliantModule } from './compliant/compliant.module'
 import { PartnershipModule } from './partnership/partnership.module'
 import { SearchModule } from './search/search.module'
-import { HeadcategoryModule } from './headcategory/headcategory.module';
-import { SocialModule } from './social/social.module';
+import { HeadcategoryModule } from './headcategory/headcategory.module'
+import { SocialModule } from './social/social.module'
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { SocialModule } from './social/social.module';
         host: cs.get('PG_HOST'),
         port: cs.get('PG_PORT'),
         username: cs.get('PG_USER'),
-        password: cs.get('PG_PWD'),
+        password: cs.get<string>('PG_PWD'),
         database: cs.get('PG_NAME'),
         synchronize: true,
         autoLoadEntities: true
