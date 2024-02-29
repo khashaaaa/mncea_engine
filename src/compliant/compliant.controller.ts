@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common'
 import { CompliantService } from './compliant.service'
 import { CreateCompliantDto } from './dto/create-compliant.dto'
 import { UpdateCompliantDto } from './dto/update-compliant.dto'
+import { JwtAuthGuard } from 'src/auth/auth.guard'
 
 @Controller('compliant')
 export class CompliantController {
@@ -28,6 +29,7 @@ export class CompliantController {
   }
 
   @Delete(':mark')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('mark') mark: number) {
     return await this.compliantService.remove(mark)
   }

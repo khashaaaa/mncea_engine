@@ -21,7 +21,6 @@ export class BasecategoryController {
   }
 
   @Get(':mark')
-  @UseGuards(JwtAuthGuard)
   async findOne(@Param('mark') mark: number) {
     return await this.basecategoryService.findOne(mark)
   }

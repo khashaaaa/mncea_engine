@@ -21,7 +21,6 @@ export class MidcategoryController {
   }
 
   @Get(':mark')
-  @UseGuards(JwtAuthGuard)
   async findOne(@Param('mark') mark: number) {
     return await this.midcategoryService.findOne(mark)
   }

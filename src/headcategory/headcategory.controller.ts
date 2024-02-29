@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common'
 import { HeadcategoryService } from './headcategory.service'
 import { CreateHeadcategoryDto } from './dto/create-headcategory.dto'
 import { UpdateHeadcategoryDto } from './dto/update-headcategory.dto'
+import { JwtAuthGuard } from 'src/auth/auth.guard'
 
 @Controller('headcategory')
 export class HeadcategoryController {
   constructor(private readonly headcategoryService: HeadcategoryService) { }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() createHeadcategoryDto: CreateHeadcategoryDto) {
     return await this.headcategoryService.create(createHeadcategoryDto)
   }
@@ -23,11 +25,13 @@ export class HeadcategoryController {
   }
 
   @Patch(':mark')
+  @UseGuards(JwtAuthGuard)
   async update(@Param('mark') mark: number, @Body() updateHeadcategoryDto: UpdateHeadcategoryDto) {
     return await this.headcategoryService.update(mark, updateHeadcategoryDto)
   }
 
   @Delete(':mark')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('mark') mark: number) {
     return await this.headcategoryService.remove(mark)
   }

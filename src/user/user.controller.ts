@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, BadRequestException, Res } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, BadRequestException, Res, UseGuards, NotFoundException, InternalServerErrorException } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
+import { JwtAuthGuard } from 'src/auth/auth.guard'
+import * as sharp from 'sharp'
+import * as fs from 'fs/promises'
 import * as path from 'path'
 
 @Controller('user')
@@ -29,14 +32,15 @@ export class UserController {
   async upload(
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
-      }),
-    ) file: Express.Multer.File,
-  ) {
+        validators: [new FileTypeValidator({ fileType: /\.(jpg|jpeg|png|webp)$/ })]
+      })
+    ) file: Express.Multer.File) {
     try {
+      const webpBuffer = await sharp(file.buffer).webp().toBuffer()
+
       return {
         ok: true,
-        file,
+        data: webpBuffer,
         message: 'Зураг амжилттай хуулагдлаа',
       }
     } catch (error) {
@@ -44,15 +48,45 @@ export class UserController {
     }
   }
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.create(createUserDto)
+  @Get('avatar/:avatar')
+  async serveImage(@Param('avatar') filename: string, @Res() res: any) {
+
+    try {
+
+      const imagePath = path.join(__dirname, '../../../public/avatar', filename)
+      await fs.access(imagePath)
+      return await res.sendFile(imagePath)
+
+    }
+    catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new NotFoundException('Зураг олдсонгүй')
+      } else {
+        throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+      }
+    }
   }
 
-  @Get('avatar/:avatar')
-  serveImage(@Param('avatar') filename: string, @Res() res: any) {
-    const imagePath = path.join(__dirname, '../../../public/avatar', filename)
-    return res.sendFile(imagePath)
+  @Post('sweep')
+  async sweepImage(@Body() data: any) {
+    const { avatar } = data
+
+    try {
+      const imgPath = path.join(__dirname, '../../../public/avatar', avatar)
+      await fs.unlink(imgPath)
+      return {
+        ok: true,
+        message: 'Зураг устгагдлаа'
+      }
+    } catch (error) {
+      throw new InternalServerErrorException('Зураг утсгах явцад алдаа гарлаа: ' + error.message)
+    }
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto)
   }
 
   @Get()
@@ -66,11 +100,13 @@ export class UserController {
   }
 
   @Patch(':mark')
+  @UseGuards(JwtAuthGuard)
   async update(@Param('mark') mark: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.userService.update(mark, updateUserDto)
   }
 
   @Delete(':mark')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('mark') mark: string) {
     return await this.userService.remove(mark)
   }

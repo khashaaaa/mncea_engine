@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, BadRequestException, Res, InternalServerErrorException, Query, NotFoundException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, BadRequestException, Res, InternalServerErrorException, Query, NotFoundException, UseGuards } from '@nestjs/common'
 import { PostService } from './post.service'
 import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
+import { Language } from '../enum/language'
+import { JwtAuthGuard } from 'src/auth/auth.guard'
+import * as sharp from 'sharp'
 import * as path from 'path'
 import * as fs from 'fs/promises'
-import { Language } from '../enum/language'
 
 @Controller('post')
 export class PostController {
@@ -24,15 +26,15 @@ export class PostController {
   }))
   async upload(@UploadedFile(
     new ParseFilePipe({
-      validators: [
-        new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-      ],
-    }),
+      validators: [new FileTypeValidator({ fileType: /\.(jpg|jpeg|png|webp)$/ })]
+    })
   ) file: Express.Multer.File) {
     try {
+      const webpBuffer = await sharp(file.buffer).webp().toBuffer()
+
       return {
         ok: true,
-        file,
+        data: webpBuffer,
         message: 'Зураг амжилттай хуулагдлаа'
       }
     } catch (error) {
@@ -40,16 +42,26 @@ export class PostController {
     }
   }
 
-  @Get('/thumbnail/:thumbnail')
+  @Get('thumbnail/:thumbnail')
   async serveImage(@Param('thumbnail') filename: string, @Res() res: any) {
+
     try {
+
       const imagePath = path.join(__dirname, '../../../public/post', filename)
+
       await fs.access(imagePath)
+
       return res.sendFile(imagePath)
+
     } catch (error) {
-      return {
-        ok: false,
-        message: error.message
+
+      if (error.code === 'ENOENT') {
+
+        throw new NotFoundException('Зураг олдсонгүй')
+
+      } else {
+
+        throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
       }
     }
   }
@@ -71,6 +83,7 @@ export class PostController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Body() createPostDto: CreatePostDto) {
     return await this.postService.create(createPostDto)
   }
@@ -101,11 +114,13 @@ export class PostController {
   }
 
   @Patch(':mark/edit')
+  @UseGuards(JwtAuthGuard)
   async update(@Param('mark') mark: string, @Body() updatePostDto: UpdatePostDto) {
     return await this.postService.update(mark, updatePostDto)
   }
 
   @Delete(':mark/delete')
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('mark') mark: string) {
     return await this.postService.remove(mark)
   }

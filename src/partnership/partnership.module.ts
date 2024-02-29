@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { PartnershipService } from './partnership.service';
-import { PartnershipController } from './partnership.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Partnership } from './entities/partnership.entity';
+import { Module } from '@nestjs/common'
+import { PartnershipService } from './partnership.service'
+import { PartnershipController } from './partnership.controller'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Partnership } from './entities/partnership.entity'
 
 @Module({
   imports: [
@@ -11,4 +11,4 @@ import { Partnership } from './entities/partnership.entity';
   controllers: [PartnershipController],
   providers: [PartnershipService],
 })
-export class PartnershipModule {}
+export class PartnershipModule { }

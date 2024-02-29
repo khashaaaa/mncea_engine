@@ -21,7 +21,6 @@ export class SubcategoryController {
   }
 
   @Get(':mark')
-  @UseGuards(JwtAuthGuard)
   async findOne(@Param('mark') mark: number) {
     return await this.subcategoryService.findOne(mark)
   }
