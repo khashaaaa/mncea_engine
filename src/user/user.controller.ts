@@ -5,7 +5,6 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { JwtAuthGuard } from 'src/auth/auth.guard'
-import * as sharp from 'sharp'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
@@ -30,21 +29,20 @@ export class UserController {
     }),
   )
   async upload(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: /\.(jpg|jpeg|png|webp)$/ })]
-      })
-    ) file: Express.Multer.File) {
-    try {
-      const webpBuffer = await sharp(file.buffer).webp().toBuffer()
+    @UploadedFile() file: Express.Multer.File) {
 
+    if (file) {
       return {
         ok: true,
-        data: webpBuffer,
-        message: 'Зураг амжилттай хуулагдлаа',
+        data: file.originalname,
+        message: 'Зураг амжилттай хуулагдлаа'
       }
-    } catch (error) {
-      throw new BadRequestException('Алдааны мэдээлэл: ' + error.message)
+    }
+    else {
+      return {
+        ok: false,
+        message: 'Зураг хоосон байна'
+      }
     }
   }
 

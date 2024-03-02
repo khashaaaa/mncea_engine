@@ -13,12 +13,12 @@ export class PageService {
 
   async create(createPageDto: CreatePageDto) {
     try {
-      const data = await this.repo.save(createPageDto)
+      const record = await this.repo.save(createPageDto)
 
       return {
         ok: true,
-        data,
-        message: 'Нийтлэгдлээ'
+        data: record,
+        message: 'Хуудас нийтлэгдлээ'
       }
     }
     catch (error) {
@@ -42,7 +42,11 @@ export class PageService {
     const exist = await this.repo.findOne({ where: { language: body.language, page: body.page } })
 
     if (!exist) {
-      throw new NotFoundException('Олдсонгүй')
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй',
+        data: null
+      }
     }
 
     return {

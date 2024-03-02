@@ -6,7 +6,6 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { Language } from '../enum/language'
 import { JwtAuthGuard } from 'src/auth/auth.guard'
-import * as sharp from 'sharp'
 import * as path from 'path'
 import * as fs from 'fs/promises'
 
@@ -24,21 +23,20 @@ export class PostController {
       },
     }),
   }))
-  async upload(@UploadedFile(
-    new ParseFilePipe({
-      validators: [new FileTypeValidator({ fileType: /\.(jpg|jpeg|png|webp)$/ })]
-    })
-  ) file: Express.Multer.File) {
-    try {
-      const webpBuffer = await sharp(file.buffer).webp().toBuffer()
+  async upload(@UploadedFile() file: Express.Multer.File) {
 
+    if (file) {
       return {
         ok: true,
-        data: webpBuffer,
+        data: file.originalname,
         message: 'Зураг амжилттай хуулагдлаа'
       }
-    } catch (error) {
-      throw new BadRequestException('Алдааны мэдээлэл: ' + error.message)
+    }
+    else {
+      return {
+        ok: false,
+        message: 'Зураг хоосон байна'
+      }
     }
   }
 
