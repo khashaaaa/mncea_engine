@@ -38,8 +38,8 @@ export class PageService {
     }
   }
 
-  async findByName(body: { language: Language, page: string }) {
-    const exist = await this.repo.findOne({ where: { language: body.language, page: body.page } })
+  async findByName(body: { language: Language, page: string, subpage?: string }) {
+    const exist = await this.repo.findOne({ where: { language: body.language, page: body.page, subpage: body.subpage ? body.subpage : '' } })
 
     if (!exist) {
       return {

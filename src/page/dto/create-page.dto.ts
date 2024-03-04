@@ -4,4 +4,5 @@ export class CreatePageDto {
     content: string
     admin: string
     page: string
+    subpage?: string
 }

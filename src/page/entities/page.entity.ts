@@ -19,6 +19,9 @@ export class Page {
     @Column()
     page: string
 
+    @Column({ nullable: true })
+    subpage: string
+
     @Column({
         type: 'enum',
         enum: Language
