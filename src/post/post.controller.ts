@@ -7,7 +7,7 @@ import { diskStorage } from 'multer'
 import { Language } from '../enum/language'
 import { JwtAuthGuard } from 'src/auth/auth.guard'
 import * as path from 'path'
-import * as fs from 'fs/promises'
+import * as fs from 'fs'
 
 @Controller('post')
 export class PostController {
@@ -47,7 +47,7 @@ export class PostController {
 
       const imagePath = path.join(__dirname, '../../../public/post', filename)
 
-      await fs.access(imagePath)
+      fs.accessSync(imagePath)
 
       return res.sendFile(imagePath)
 
@@ -70,13 +70,27 @@ export class PostController {
 
     try {
       const imgPath = path.join(__dirname, '../../../public/post', thumbnail)
-      await fs.unlink(imgPath)
-      return {
-        ok: true,
-        message: 'Зураг устгагдлаа'
+
+      if (fs.existsSync(imgPath)) {
+        fs.unlinkSync(imgPath)
+        return {
+          ok: true,
+          message: 'Зураг устгагдлаа'
+        }
       }
+      else {
+        return {
+          ok: true,
+          message: 'Зураг хэдийн устгагдсан байна'
+        }
+      }
+
     } catch (error) {
-      throw new InternalServerErrorException('Зураг утсгах явцад алдаа гарлаа: ' + error.message)
+
+      return {
+        ok: false,
+        message: `Зураг устгах үед алдаа гарлаа: ${error.message}`
+      }
     }
   }
 
