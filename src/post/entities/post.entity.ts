@@ -36,7 +36,7 @@ export class Post {
     })
     priority?: Priority
 
-    @Column()
+    @Column({ nullable: true })
     base_category: number
 
     @Column({ nullable: true })
