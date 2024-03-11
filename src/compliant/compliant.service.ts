@@ -11,11 +11,20 @@ export class CompliantService {
   constructor(@InjectRepository(Compliant) private repo: Repository<Compliant>) { }
 
   async create(createCompliantDto: CreateCompliantDto) {
-    const record = await this.repo.save(createCompliantDto)
-    return {
-      ok: true,
-      data: record,
-      message: 'Таны хүсэлт амжилттай илгээгдлээ'
+
+    try {
+      const record = await this.repo.save(createCompliantDto)
+      return {
+        ok: true,
+        data: record,
+        message: 'Таны хүсэлт амжилттай илгээгдлээ'
+      }
+    }
+    catch (error) {
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -37,10 +46,13 @@ export class CompliantService {
 
   async update(mark: number, updateCompliantDto: UpdateCompliantDto) {
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       const updated = await this.repo.save({
@@ -55,14 +67,20 @@ export class CompliantService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async remove(mark: number) {
     const delItem = await this.repo.delete(mark)
     if (delItem.affected === 0) {
-      throw new NotFoundException('Олдсонгүй')
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй'
+      }
     }
     return {
       ok: true,
