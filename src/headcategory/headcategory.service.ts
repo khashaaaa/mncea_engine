@@ -4,6 +4,7 @@ import { UpdateHeadcategoryDto } from './dto/update-headcategory.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Headcategory } from './entities/headcategory.entity'
 import { Repository } from 'typeorm'
+import { Language } from 'src/enum/language'
 
 @Injectable()
 export class HeadcategoryService {
@@ -25,8 +26,8 @@ export class HeadcategoryService {
     }
   }
 
-  async findAll() {
-    const records = await this.repo.find()
+  async findAll(language: Language) {
+    const records = await this.repo.find({ where: { language } })
     return {
       ok: true,
       data: records

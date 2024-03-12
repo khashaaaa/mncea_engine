@@ -1,7 +1,7 @@
 export class CreateHeadcategoryDto {
 
-    mn: string
-    en: string
-    keyword: string
+    name: string
+    language: string
+    slug: string
     children
 }

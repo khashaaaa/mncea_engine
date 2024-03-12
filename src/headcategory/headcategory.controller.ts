@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common'
 import { HeadcategoryService } from './headcategory.service'
 import { CreateHeadcategoryDto } from './dto/create-headcategory.dto'
 import { UpdateHeadcategoryDto } from './dto/update-headcategory.dto'
 import { JwtAuthGuard } from 'src/auth/auth.guard'
+import { Language } from 'src/enum/language'
 
 @Controller('headcategory')
 export class HeadcategoryController {
@@ -15,8 +16,8 @@ export class HeadcategoryController {
   }
 
   @Get()
-  async findAll() {
-    return await this.headcategoryService.findAll()
+  async findAll(@Query('language') language: Language) {
+    return await this.headcategoryService.findAll(language)
   }
 
   @Get(':mark')

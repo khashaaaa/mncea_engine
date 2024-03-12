@@ -1,7 +1,7 @@
 export class UpdateHeadcategoryDto {
 
-    mn: string
-    en: string
-    keyword: string
-    children
+    name?: string
+    language?: string
+    slug?: string
+    children?
 }

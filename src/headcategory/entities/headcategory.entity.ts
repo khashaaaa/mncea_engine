@@ -7,13 +7,13 @@ export class Headcategory {
     mark: number
 
     @Column()
-    mn: string
+    name: string
 
     @Column()
-    en: string
+    language: string
 
     @Column()
-    keyword: string
+    slug: string
 
     @Column('jsonb', { nullable: true })
     children
