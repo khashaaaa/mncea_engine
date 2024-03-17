@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { CreatePageDto } from './dto/create-page.dto'
 import { UpdatePageDto } from './dto/update-page.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -13,6 +13,11 @@ export class PageService {
 
   async create(createPageDto: CreatePageDto) {
     try {
+      const existingPage = await this.repo.findOne({ where: { page: createPageDto.page } })
+      if (existingPage) {
+        throw new BadRequestException('Хуудас давхцаж байна')
+      }
+
       const record = await this.repo.save(createPageDto)
 
       return {
@@ -20,8 +25,7 @@ export class PageService {
         data: record,
         message: 'Хуудас нийтлэгдлээ'
       }
-    }
-    catch (error) {
+    } catch (error) {
       throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
     }
   }
@@ -38,8 +42,8 @@ export class PageService {
     }
   }
 
-  async findByName(body: { language: Language, page: string, subpage?: string }) {
-    const exist = await this.repo.findOne({ where: { language: body.language, page: body.page, subpage: body.subpage ? body.subpage : '' } })
+  async findByName(body: { language: Language, mark: string, subpage?: string }) {
+    const exist = await this.repo.findOne({ where: { language: body.language, mark: body.mark, subpage: body.subpage ? body.subpage : '' } })
 
     if (!exist) {
       return {

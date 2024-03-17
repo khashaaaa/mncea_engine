@@ -1,30 +1,37 @@
 import { Injectable } from "@nestjs/common"
-import { Repository, Like } from "typeorm"
+import { Repository, ILike } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Post } from '../post/entities/post.entity'
+import { Page } from "src/page/entities/page.entity"
 
 @Injectable()
 export class SearchService {
 
-    constructor(@InjectRepository(Post) private PostRepo: Repository<Post>) { }
+    constructor(
+        @InjectRepository(Post) private postRepo: Repository<Post>,
+        @InjectRepository(Page) private pageRepo: Repository<Page>
+    ) { }
 
-    async search(body: any) {
+    async search(keyword: string) {
         try {
-            const { keyword } = body
-            const result = await this.PostRepo
-                .createQueryBuilder('post')
-                .where('post.title LIKE :title', { title: `%${keyword}%` })
-                .getMany()
+            const [post, page] = await Promise.all([
+                this.postRepo.find({
+                    where: { title: ILike(`%${keyword}%`) }
+                }),
+                this.pageRepo.find({
+                    where: { title: ILike(`%${keyword}%`) }
+                })
+            ])
 
             return {
                 ok: true,
-                data: result
+                data: {
+                    post,
+                    page,
+                }
             }
         } catch (error) {
-            return {
-                ok: false,
-                message: error.message
-            }
+            console.error(error.message)
         }
     }
 }

@@ -8,6 +8,7 @@ export class SearchController {
 
     @Post()
     async search(@Body() body: any) {
-        return await this.searchServ.search(body)
+        const { keyword } = body
+        return await this.searchServ.search(keyword)
     }
 }
