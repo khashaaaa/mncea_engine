@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateCompliantDto } from './dto/create-compliant.dto'
 import { UpdateCompliantDto } from './dto/update-compliant.dto'
 import { InjectRepository } from '@nestjs/typeorm'

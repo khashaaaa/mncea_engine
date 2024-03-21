@@ -55,11 +55,17 @@ export class PostController {
 
       if (error.code === 'ENOENT') {
 
-        throw new NotFoundException('Зураг олдсонгүй')
+        return {
+          ok: false,
+          message: 'Зураг олдсонгүй'
+        }
 
       } else {
 
-        throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+        return {
+          ok: false,
+          message: error.message
+        }
       }
     }
   }

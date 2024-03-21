@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto'
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -23,7 +23,10 @@ export class SubcategoryService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл', error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -37,7 +40,10 @@ export class SubcategoryService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       return {
@@ -46,7 +52,10 @@ export class SubcategoryService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл: ', error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -56,7 +65,10 @@ export class SubcategoryService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       const updated = await this.repo.save({
@@ -71,14 +83,20 @@ export class SubcategoryService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async remove(mark: number) {
     const delItem = await this.repo.delete(mark)
     if (delItem.affected === 0) {
-      throw new NotFoundException('Олдсонгүй')
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй'
+      }
     }
     return {
       ok: true,

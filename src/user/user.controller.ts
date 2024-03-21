@@ -58,9 +58,15 @@ export class UserController {
     }
     catch (error) {
       if (error.code === 'ENOENT') {
-        throw new NotFoundException('Зураг олдсонгүй')
+        return {
+          ok: false,
+          message: 'Зураг олдсонгүй'
+        }
       } else {
-        throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+        return {
+          ok: false,
+          message: error.message
+        }
       }
     }
   }
@@ -77,7 +83,10 @@ export class UserController {
         message: 'Зураг устгагдлаа'
       }
     } catch (error) {
-      throw new InternalServerErrorException('Зураг утсгах явцад алдаа гарлаа: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 

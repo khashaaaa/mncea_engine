@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreatePageDto } from './dto/create-page.dto'
 import { UpdatePageDto } from './dto/update-page.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -15,7 +15,10 @@ export class PageService {
     try {
       const existingPage = await this.repo.findOne({ where: { page: createPageDto.page } })
       if (existingPage) {
-        throw new BadRequestException('Хуудас давхцаж байна')
+        return {
+          ok: false,
+          message: 'Хуудас давхцаж байна'
+        }
       }
 
       const record = await this.repo.save(createPageDto)
@@ -26,7 +29,10 @@ export class PageService {
         message: 'Хуудас нийтлэгдлээ'
       }
     } catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -38,7 +44,10 @@ export class PageService {
         data: records
       }
     } catch (error) {
-      throw new NotFoundException('Мэдээлэл олдсонгүй: ' + error.message)
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй'
+      }
     }
   }
 
@@ -48,8 +57,7 @@ export class PageService {
     if (!exist) {
       return {
         ok: false,
-        message: 'Мэдээлэл олдсонгүй',
-        data: null
+        message: 'Мэдээлэл олдсонгүй'
       }
     }
 
@@ -64,7 +72,10 @@ export class PageService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       return {
@@ -73,7 +84,10 @@ export class PageService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -82,7 +96,10 @@ export class PageService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       const updated = await this.repo.save({
@@ -97,14 +114,20 @@ export class PageService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async remove(mark: string) {
     const delItem = await this.repo.delete(mark)
     if (delItem.affected === 0) {
-      throw new NotFoundException('Олдсонгүй')
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй'
+      }
     }
     return {
       ok: true,

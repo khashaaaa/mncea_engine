@@ -6,7 +6,7 @@ export class Headcategory {
     @PrimaryGeneratedColumn()
     mark: number
 
-    @Column()
+    @Column({ nullable: true })
     name: string
 
     @Column()

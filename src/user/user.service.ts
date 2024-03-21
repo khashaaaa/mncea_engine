@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -16,7 +16,10 @@ export class UserService {
     })
 
     if (!user) {
-      this.handleNotFoundError('Хэрэглэгч олдсонгүй')
+      return {
+        ok: false,
+        message: 'Хэрэглэгч олдсонгүй'
+      }
     }
 
     const access_token = await this.jwts.signAsync(
@@ -41,7 +44,10 @@ export class UserService {
     })
 
     if (existingUser) {
-      this.handleConflictError('Хэрэглэгч бүртгэгдсэн байна')
+      return {
+        ok: false,
+        message: 'Хэрэглэгч бүртгэгдсэн байна'
+      }
     }
 
     try {
@@ -52,7 +58,10 @@ export class UserService {
         message: 'Хэрэглэгч үүслээ',
       }
     } catch (error) {
-      this.handleInternalServerError(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -69,15 +78,9 @@ export class UserService {
         data: user,
       }
     } catch (error) {
-      if (error.name !== 'EntityNotFoundError') {
-        this.handleInternalServerError(error.message)
-      }
-
-      this.handleNotFoundError('Хэрэглэгч олдсонгүй')
-
       return {
         ok: false,
-        data: null,
+        message: error.message
       }
     }
   }
@@ -87,7 +90,10 @@ export class UserService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        this.handleNotFoundError('Олдсонгүй')
+        return {
+          ok: false,
+          message: 'Хэрэглэгч олдсонгүй'
+        }
       }
 
       const updated = await this.repo.save({
@@ -101,32 +107,26 @@ export class UserService {
         message: 'Хэрэглэгчийн мэдээлэл шинэчлэгдлээ',
       }
     } catch (error) {
-      this.handleInternalServerError(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async remove(mark: string) {
     const delItem = await this.repo.delete(mark)
     if (delItem.affected === 0) {
-      this.handleNotFoundError('Олдсонгүй')
+      return {
+        ok: false,
+        message: 'Хэрэглэгч олдсонгүй'
+      }
     }
     return {
       ok: true,
       data: delItem,
       message: 'Хэрэглэгч устгагдлаа',
     }
-  }
-
-  private handleNotFoundError(message: string) {
-    throw new NotFoundException(message)
-  }
-
-  private handleConflictError(message: string) {
-    throw new ConflictException(message)
-  }
-
-  private handleInternalServerError(message: string) {
-    throw new InternalServerErrorException('Алдааны мэдээлэл: ' + message)
   }
 }
 

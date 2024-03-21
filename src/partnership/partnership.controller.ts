@@ -43,7 +43,10 @@ export class PartnershipController {
       const imagePath = path.join(__dirname, '../../../public/partnership', logo)
       return res.sendFile(imagePath)
     } catch (error) {
-      throw new NotFoundException('Зураг олдсонгүй')
+      return {
+        ok: false,
+        message: 'Зураг олдсонгүй'
+      }
     }
   }
 
@@ -59,7 +62,10 @@ export class PartnershipController {
         message: 'Зураг устгагдлаа'
       }
     } catch (error) {
-      throw new InternalServerErrorException('Зураг утсгах явцад алдаа гарлаа: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 

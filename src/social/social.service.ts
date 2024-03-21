@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateSocialDto } from './dto/create-social.dto'
 import { UpdateSocialDto } from './dto/update-social.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -21,7 +21,10 @@ export class SocialService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -39,7 +42,10 @@ export class SocialService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Мэдээлэл олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       return {
@@ -48,7 +54,10 @@ export class SocialService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -58,7 +67,10 @@ export class SocialService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Мэдээлэл олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       const updated = await this.repo.save({
@@ -73,14 +85,20 @@ export class SocialService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async remove(mark: number) {
     const delItem = await this.repo.delete(mark)
     if (delItem.affected === 0) {
-      throw new NotFoundException('Мэдээлэл олдсонгүй')
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй'
+      }
     }
     return {
       ok: true,

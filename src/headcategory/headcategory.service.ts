@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateHeadcategoryDto } from './dto/create-headcategory.dto'
 import { UpdateHeadcategoryDto } from './dto/update-headcategory.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -22,7 +22,10 @@ export class HeadcategoryService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -38,7 +41,10 @@ export class HeadcategoryService {
     try {
       const record = await this.repo.findOneOrFail({ where: { mark } })
       if (!record) {
-        throw new NotFoundException('Илэрц байхгүй байна')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       return {
@@ -47,7 +53,10 @@ export class HeadcategoryService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -58,7 +67,10 @@ export class HeadcategoryService {
       const exist = await this.repo.findOneOrFail({ where: { mark } })
 
       if (!exist) {
-        throw new NotFoundException('Мэдээлэл олдсонгүй')
+        return {
+          ok: false,
+          message: 'Мэдээлэл олдсонгүй'
+        }
       }
 
       const updated = await this.repo.save({
@@ -73,7 +85,10 @@ export class HeadcategoryService {
       }
     }
     catch (error) {
-      throw new InternalServerErrorException('Алдааны мэдээлэл: ' + error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
@@ -81,7 +96,10 @@ export class HeadcategoryService {
     const delItem = await this.repo.delete(mark)
 
     if (delItem.affected === 0) {
-      throw new NotFoundException('Олдсонгүй')
+      return {
+        ok: false,
+        message: 'Мэдээлэл олдсонгүй'
+      }
     }
     return {
       ok: true,
