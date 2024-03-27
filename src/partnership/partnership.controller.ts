@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, BadRequestException, Res, NotFoundException, InternalServerErrorException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common'
 import { PartnershipService } from './partnership.service'
 import { CreatePartnershipDto } from './dto/create-partnership.dto'
 import { UpdatePartnershipDto } from './dto/update-partnership.dto'

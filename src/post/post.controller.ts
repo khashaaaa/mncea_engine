@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, ParseFilePipe, FileTypeValidator, MaxFileSizeValidator, BadRequestException, Res, InternalServerErrorException, Query, NotFoundException, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Res, Query, UseGuards } from '@nestjs/common'
 import { PostService } from './post.service'
 import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
@@ -114,6 +114,16 @@ export class PostController {
   @Get()
   async findAll(@Query('language') language: Language) {
     return await this.postService.findAll(language)
+  }
+
+  @Get('regular')
+  async findAllRegular(@Query('language') language: Language) {
+    return await this.postService.findAllRegular(language)
+  }
+
+  @Get('base/:mark')
+  async findBase(@Param('mark') mark: number) {
+    return await this.postService.findBase(mark)
   }
 
   @Get('mid/:mark')

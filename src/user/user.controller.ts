@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, BadRequestException, Res, UseGuards, NotFoundException, InternalServerErrorException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
-import { JwtAuthGuard } from 'src/auth/auth.guard'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
@@ -106,13 +105,11 @@ export class UserController {
   }
 
   @Patch(':mark')
-  @UseGuards(JwtAuthGuard)
   async update(@Param('mark') mark: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.userService.update(mark, updateUserDto)
   }
 
   @Delete(':mark')
-  @UseGuards(JwtAuthGuard)
   async remove(@Param('mark') mark: string) {
     return await this.userService.remove(mark)
   }
