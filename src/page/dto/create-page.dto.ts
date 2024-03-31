@@ -5,4 +5,5 @@ export class CreatePageDto {
     admin: string
     page: string
     subpage?: string
+    thumbnail?: string
 }

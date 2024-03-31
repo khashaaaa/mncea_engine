@@ -5,4 +5,5 @@ export class UpdatePageDto {
     admin?: string
     page?: string
     subpage?: string
+    thumbnail?: string
 }

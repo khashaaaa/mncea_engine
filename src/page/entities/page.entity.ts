@@ -22,6 +22,9 @@ export class Page {
     @Column({ nullable: true })
     subpage: string
 
+    @Column({ nullable: true })
+    thumbnail?: string
+
     @Column({
         type: 'enum',
         enum: Language

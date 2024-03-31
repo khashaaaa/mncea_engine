@@ -1,9 +1,7 @@
 # compiled output
 /dist
 /node_modules
-public/avatar
-public/partnership
-public/post
+public/
 
 /package-lock.json
 

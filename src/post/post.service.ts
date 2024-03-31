@@ -3,8 +3,9 @@ import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Post } from './entities/post.entity'
-import { Repository } from 'typeorm'
+import { Not, Repository } from 'typeorm'
 import { Language } from '../enum/language'
+import { Priority } from 'src/enum/priority'
 
 @Injectable()
 export class PostService {
@@ -44,7 +45,7 @@ export class PostService {
   }
 
   async findAllRegular(language: Language) {
-    return await this.repo.find({ where: { language, base_category: null || 0, mid_category: null || 0, sub_category: null || 0 } })
+    return await this.repo.find({ where: { language, priority: Not(Priority.FEATURED) } })
   }
 
   async findBase(mark: number) {
