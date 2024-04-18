@@ -13,7 +13,7 @@ export class PageService {
 
   async create(createPageDto: CreatePageDto) {
     try {
-      const existingPage = await this.repo.findOne({ where: { page: createPageDto.page } })
+      const existingPage = await this.repo.findOne({ where: { subpage: createPageDto.subpage } })
       if (existingPage) {
         return {
           ok: false,
