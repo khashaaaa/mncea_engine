@@ -36,7 +36,7 @@ export class MidcategoryService {
   async findOne(mark: number) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -61,7 +61,7 @@ export class MidcategoryService {
   async update(mark: number, updateMidcategoryDto: UpdateMidcategoryDto) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

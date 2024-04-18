@@ -39,7 +39,7 @@ export class SocialService {
   async findOne(mark: number) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -64,7 +64,7 @@ export class SocialService {
   async update(mark: number, updateSocialDto: UpdateSocialDto) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

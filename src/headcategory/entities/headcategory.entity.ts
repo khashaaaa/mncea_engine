@@ -1,10 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, Generated, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class Headcategory {
 
     @PrimaryGeneratedColumn()
     mark: number
+
+    @Column({ nullable: true })
+    order: number
 
     @Column({ nullable: true })
     name: string

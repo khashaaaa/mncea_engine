@@ -69,7 +69,7 @@ export class PageService {
 
   async findOne(mark: string) {
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -93,7 +93,7 @@ export class PageService {
 
   async update(mark: string, updatePageDto: UpdatePageDto) {
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

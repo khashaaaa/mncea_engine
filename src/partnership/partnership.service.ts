@@ -48,7 +48,7 @@ export class PartnershipService {
   async findOne(mark: string) {
 
     try {
-      const record = await this.repo.findOneOrFail({ where: { mark } })
+      const record = await this.repo.findOne({ where: { mark } })
 
       if (!record) {
         return {
@@ -73,7 +73,7 @@ export class PartnershipService {
 
     try {
 
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

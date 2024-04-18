@@ -37,7 +37,7 @@ export class SubcategoryService {
   async findOne(mark: number) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -62,7 +62,7 @@ export class SubcategoryService {
   async update(mark: number, updateSubcategoryDto: UpdateSubcategoryDto) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

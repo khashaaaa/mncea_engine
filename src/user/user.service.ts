@@ -71,7 +71,7 @@ export class UserService {
 
   async findOne(mark: string) {
     try {
-      const user = await this.repo.findOneOrFail({ where: { mark } })
+      const user = await this.repo.findOne({ where: { mark } })
 
       return {
         ok: true,
@@ -87,7 +87,7 @@ export class UserService {
 
   async update(mark: string, updateUserDto: UpdateUserDto) {
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

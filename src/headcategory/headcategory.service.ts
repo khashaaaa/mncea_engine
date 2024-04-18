@@ -30,7 +30,7 @@ export class HeadcategoryService {
   }
 
   async findAll(language: Language) {
-    const records = await this.repo.find({ where: { language } })
+    const records = await this.repo.find({ where: { language }, order: { order: 'ASC' } })
     return {
       ok: true,
       data: records
@@ -39,7 +39,7 @@ export class HeadcategoryService {
 
   async findOne(mark: number) {
     try {
-      const record = await this.repo.findOneOrFail({ where: { mark } })
+      const record = await this.repo.findOne({ where: { mark } })
       if (!record) {
         return {
           ok: false,
@@ -64,7 +64,7 @@ export class HeadcategoryService {
 
     try {
 
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

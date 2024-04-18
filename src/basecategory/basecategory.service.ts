@@ -36,7 +36,7 @@ export class BasecategoryService {
   async findOne(mark: number) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
       if (!exist) {
         return {
           ok: false,
@@ -59,7 +59,7 @@ export class BasecategoryService {
   async update(mark: number, updateBasecategoryDto: UpdateBasecategoryDto) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {

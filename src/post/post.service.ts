@@ -63,7 +63,7 @@ export class PostService {
   async findOne(mark: string) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -88,7 +88,7 @@ export class PostService {
   async update(mark: string, updatePostDto: UpdatePostDto) {
 
     try {
-      const exist = await this.repo.findOneOrFail({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
