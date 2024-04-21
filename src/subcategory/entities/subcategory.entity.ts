@@ -7,6 +7,9 @@ export class Subcategory {
     @PrimaryGeneratedColumn()
     mark: number
 
+    @Column({ nullable: true, generated: 'increment' })
+    order: number
+
     @Column()
     name: string
 

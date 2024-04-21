@@ -14,15 +14,26 @@ export class SubcategoryService {
   async create(createSubcategoryDto: CreateSubcategoryDto) {
 
     try {
+      const lastRecord = await this.repo.find({
+        order: { order: 'DESC' },
+        take: 1
+      })
+
+      let nextIncrementValue = 1
+      if (lastRecord.length > 0) {
+        nextIncrementValue = lastRecord[0].order + 1
+      }
+
+      createSubcategoryDto.order = nextIncrementValue
+
       const data = await this.repo.save(createSubcategoryDto)
 
       return {
         ok: true,
         data,
-        message: 'Дэд цэс нэмэгдлээ'
+        message: 'Цэс нэмэгдлээ'
       }
-    }
-    catch (error) {
+    } catch (error) {
       return {
         ok: false,
         message: error.message
@@ -31,7 +42,7 @@ export class SubcategoryService {
   }
 
   async findAll(language: Language) {
-    return await this.repo.find({ where: { language } })
+    return await this.repo.find({ where: { language }, order: { order: 'ASC' } })
   }
 
   async findOne(mark: number) {
