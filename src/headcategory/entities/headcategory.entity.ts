@@ -6,7 +6,7 @@ export class Headcategory {
     @PrimaryGeneratedColumn()
     mark: number
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, generated: 'increment' })
     order: number
 
     @Column({ nullable: true })
@@ -17,6 +17,12 @@ export class Headcategory {
 
     @Column()
     slug: string
+
+    @Column({ default: false })
+    haslink: boolean
+
+    @Column({ nullable: true })
+    link: string
 
     @Column('jsonb', { nullable: true })
     children

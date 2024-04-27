@@ -4,5 +4,7 @@ export class UpdateHeadcategoryDto {
     name?: string
     language?: string
     slug?: string
+    haslink?: boolean
+    link?: string
     children?
 }

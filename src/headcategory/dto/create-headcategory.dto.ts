@@ -4,5 +4,7 @@ export class CreateHeadcategoryDto {
     name: string
     language: string
     slug: string
+    haslink: boolean
+    link: string
     children
 }
