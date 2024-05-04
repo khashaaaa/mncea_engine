@@ -13,7 +13,7 @@ export class PageService {
 
   async create(createPageDto: CreatePageDto) {
     try {
-      const existingPage = await this.repo.findOne({ where: { subpage: createPageDto.subpage } })
+      const existingPage = await this.repo.findOne({ where: { title: createPageDto.title } })
       if (existingPage) {
         return {
           ok: false,
@@ -51,8 +51,8 @@ export class PageService {
     }
   }
 
-  async findByName(body: { language: Language, mark: string, subpage?: string }) {
-    const exist = await this.repo.findOne({ where: { language: body.language, mark: body.mark, subpage: body.subpage ? body.subpage : '' } })
+  async findByName(body: { language: Language, mark: string, page?: string, subpage?: string }) {
+    const exist = await this.repo.findOne({ where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' } })
 
     if (!exist) {
       return {
