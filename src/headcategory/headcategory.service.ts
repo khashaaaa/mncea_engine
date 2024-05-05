@@ -5,11 +5,15 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Headcategory } from './entities/headcategory.entity'
 import { Repository } from 'typeorm'
 import { Language } from 'src/enum/language'
+import { Page } from 'src/page/entities/page.entity'
 
 @Injectable()
 export class HeadcategoryService {
 
-  constructor(@InjectRepository(Headcategory) private repo: Repository<Headcategory>) { }
+  constructor(
+    @InjectRepository(Headcategory) private repo: Repository<Headcategory>,
+    @InjectRepository(Page) private pageRepo: Repository<Page>
+  ) { }
 
   async create(createHeadcategoryDto: CreateHeadcategoryDto) {
 
@@ -92,18 +96,23 @@ export class HeadcategoryService {
     }
   }
 
-  async remove(mark: number) {
-    const delItem = await this.repo.delete(mark)
+  async remove(mark: any) {
+    const headCategory = await this.repo.findOne({ where: { mark } })
 
-    if (delItem.affected === 0) {
+    if (!headCategory) {
       return {
         ok: false,
         message: 'Мэдээлэл олдсонгүй'
       }
     }
+
+    const delPages = await this.pageRepo.delete({ page: headCategory.name })
+
+    await this.repo.remove(headCategory)
+
     return {
       ok: true,
-      data: delItem,
+      data: [headCategory, delPages],
       message: 'Мэдээлэл устгагдлаа'
     }
   }

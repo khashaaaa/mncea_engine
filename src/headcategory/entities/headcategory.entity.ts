@@ -19,6 +19,9 @@ export class Headcategory {
     slug: string
 
     @Column({ default: false })
+    grid: boolean
+
+    @Column({ default: false })
     haslink: boolean
 
     @Column({ nullable: true })

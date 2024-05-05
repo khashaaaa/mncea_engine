@@ -4,10 +4,12 @@ import { PageController } from './page.controller'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Page } from './entities/page.entity'
 import { JwtService } from '@nestjs/jwt'
+import { Headcategory } from 'src/headcategory/entities/headcategory.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Page])
+    TypeOrmModule.forFeature([Page]),
+    TypeOrmModule.forFeature([Headcategory])
   ],
   controllers: [PageController],
   providers: [PageService, JwtService],
