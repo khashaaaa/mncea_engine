@@ -3,7 +3,7 @@ import { CreatePageDto } from './dto/create-page.dto'
 import { UpdatePageDto } from './dto/update-page.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Page } from './entities/page.entity'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { Language } from 'src/enum/language'
 import { Headcategory } from 'src/headcategory/entities/headcategory.entity'
 
@@ -53,21 +53,28 @@ export class PageService {
       language: body.language
     }
 
-    if (body.page) {
+    if (body.page && !body.subpage) {
       whereClause.slug = body.page
-    }
-
-    if (body.subpage) {
+    } else if (body.subpage && !body.page) {
       whereClause.slug = body.subpage
+    } else if (body.page && body.subpage) {
+      whereClause.slug = In([body.page, body.subpage])
     }
 
     const menu = await this.headRepo.findOne({ where: whereClause })
 
-    const pages = await this.repo.find({
-      where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' },
-      take: body.perPage,
-      skip: (body.currentPage - 1) * body.perPage
-    })
+    let pages: any[]
+    if (body.perPage && body.currentPage) {
+      pages = await this.repo.find({
+        where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' },
+        take: body.perPage,
+        skip: (body.currentPage - 1) * body.perPage
+      })
+    } else {
+      pages = await this.repo.find({
+        where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' }
+      })
+    }
 
     if (pages.length < 1) {
       return {
