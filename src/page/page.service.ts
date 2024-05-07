@@ -49,44 +49,50 @@ export class PageService {
 
   async findByName(body: { language: Language, mark: string, page?: string, subpage?: string, perPage: number, currentPage: number }) {
 
-    const whereClause: any = {
-      language: body.language
-    }
+    try {
+      const whereClause: any = {
+        language: body.language
+      }
 
-    if (body.page && !body.subpage) {
-      whereClause.slug = body.page
-    } else if (body.subpage && !body.page) {
-      whereClause.slug = body.subpage
-    } else if (body.page && body.subpage) {
-      whereClause.slug = In([body.page, body.subpage])
-    }
+      if (body.page && !body.subpage) {
+        whereClause.slug = body.page
+      } else if (body.subpage && !body.page) {
+        whereClause.slug = body.subpage
+      } else if (body.page && body.subpage) {
+        whereClause.slug = In([body.page, body.subpage])
+      }
 
-    const menu = await this.headRepo.findOne({ where: whereClause })
+      const menu = await this.headRepo.findOne({ where: whereClause })
 
-    let pages: any[]
-    if (body.perPage && body.currentPage) {
-      pages = await this.repo.find({
-        where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' },
-        take: body.perPage,
-        skip: (body.currentPage - 1) * body.perPage
-      })
-    } else {
-      pages = await this.repo.find({
-        where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' }
-      })
-    }
+      if (body.perPage && body.currentPage) {
+        const record = await this.repo.find({
+          where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' },
+          take: body.perPage,
+          skip: (body.currentPage - 1) * body.perPage
+        })
 
-    if (pages.length < 1) {
-      return {
-        ok: false,
-        message: 'Мэдээлэл олдсонгүй'
+        return {
+          ok: true,
+          data: record,
+          grid: menu?.grid
+        }
+      } else {
+        const record = await this.repo.find({
+          where: { language: body.language, mark: body.mark, page: body.page ? body.page : '', subpage: body.subpage ? body.subpage : '' }
+        })
+
+        return {
+          ok: true,
+          data: record,
+          grid: menu?.grid
+        }
       }
     }
-
-    return {
-      ok: true,
-      data: pages,
-      grid: menu?.grid
+    catch (error) {
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
