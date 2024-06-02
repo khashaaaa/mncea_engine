@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -10,47 +10,61 @@ import { JwtService } from '@nestjs/jwt'
 export class UserService {
   constructor(@InjectRepository(User) private repo: Repository<User>, private jwts: JwtService) { }
 
-  async login(createUserDto: CreateUserDto) {
-    const user = await this.repo.findOne({
-      where: { username: createUserDto.username, password: createUserDto.password },
-    })
+  private logger = new Logger(UserService.name)
 
-    if (!user) {
+  async login(createUserDto: CreateUserDto) {
+
+    try {
+      const user = await this.repo.findOne({
+        where: { username: createUserDto.username, password: createUserDto.password },
+      })
+
+      if (!user) {
+        return {
+          ok: false,
+          message: 'Хэрэглэгч олдсонгүй'
+        }
+      }
+
+      const access_token = await this.jwts.signAsync(
+        { username: createUserDto.username, password: createUserDto.password },
+        { secret: process.env.JWT_SECRET }
+      )
+
       return {
-        ok: false,
-        message: 'Хэрэглэгч олдсонгүй'
+        ok: true,
+        data: user,
+        access_token,
+        message: 'Амжилттай нэвтэрлээ',
       }
     }
-
-    const access_token = await this.jwts.signAsync(
-      { username: createUserDto.username, password: createUserDto.password },
-      { secret: process.env.JWT_SECRET }
-    )
-
-    return {
-      ok: true,
-      data: user,
-      access_token,
-      message: 'Амжилттай нэвтэрлээ',
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async create(createUserDto: CreateUserDto) {
-    const existingUser = await this.repo.findOne({
-      where: [
-        { username: createUserDto.username },
-        { mobile: createUserDto.mobile },
-      ],
-    })
-
-    if (existingUser) {
-      return {
-        ok: false,
-        message: 'Хэрэглэгч бүртгэгдсэн байна'
-      }
-    }
 
     try {
+
+      const existingUser = await this.repo.findOne({
+        where: [
+          { username: createUserDto.username },
+          { mobile: createUserDto.mobile },
+        ],
+      })
+
+      if (existingUser) {
+        return {
+          ok: false,
+          message: 'Хэрэглэгч бүртгэгдсэн байна'
+        }
+      }
+
       const user = await this.repo.save(createUserDto)
       return {
         ok: true,
@@ -58,6 +72,7 @@ export class UserService {
         message: 'Хэрэглэгч үүслээ',
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -78,6 +93,7 @@ export class UserService {
         data: user,
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -107,6 +123,7 @@ export class UserService {
         message: 'Хэрэглэгчийн мэдээлэл шинэчлэгдлээ',
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

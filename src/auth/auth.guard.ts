@@ -2,6 +2,7 @@ import {
     CanActivate,
     ExecutionContext,
     Injectable,
+    Logger,
     UnauthorizedException,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
@@ -11,10 +12,13 @@ import { Request } from 'express'
 export class JwtAuthGuard implements CanActivate {
     constructor(private jwtService: JwtService) { }
 
+    private logger = new Logger(JwtAuthGuard.name)
+
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
         const token = this.extractTokenFromHeader(request)
         if (!token) {
+            this.logger.error('Тохируулах эрхгүй байна')
             throw new UnauthorizedException('Тохируулах эрхгүй байна')
         }
         try {
@@ -26,6 +30,7 @@ export class JwtAuthGuard implements CanActivate {
             )
             request['customer'] = payload
         } catch {
+            this.logger.error('Тохируулах эрхгүй байна')
             throw new UnauthorizedException('Тохируулах эрхгүй байна')
         }
         return true

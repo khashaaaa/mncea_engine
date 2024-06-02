@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto'
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -10,6 +10,8 @@ import { Language } from 'src/enum/language'
 export class SubcategoryService {
 
   constructor(@InjectRepository(Subcategory) private repo: Repository<Subcategory>) { }
+
+  private logger = new Logger(SubcategoryService.name)
 
   async create(createSubcategoryDto: CreateSubcategoryDto) {
 
@@ -34,6 +36,7 @@ export class SubcategoryService {
         message: 'Цэс нэмэгдлээ'
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -63,6 +66,7 @@ export class SubcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -94,6 +98,7 @@ export class SubcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

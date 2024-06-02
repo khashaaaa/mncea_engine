@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreateHeadcategoryDto } from './dto/create-headcategory.dto'
 import { UpdateHeadcategoryDto } from './dto/update-headcategory.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -15,6 +15,8 @@ export class HeadcategoryService {
     @InjectRepository(Page) private pageRepo: Repository<Page>
   ) { }
 
+  private logger = new Logger(HeadcategoryService.name)
+
   async create(createHeadcategoryDto: CreateHeadcategoryDto) {
 
     try {
@@ -26,6 +28,7 @@ export class HeadcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -57,6 +60,7 @@ export class HeadcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -89,6 +93,7 @@ export class HeadcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

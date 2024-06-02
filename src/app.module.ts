@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -16,6 +16,8 @@ import { PartnershipModule } from './partnership/partnership.module'
 import { SearchModule } from './search/search.module'
 import { HeadcategoryModule } from './headcategory/headcategory.module'
 import { SocialModule } from './social/social.module'
+import { DatatableModule } from './datatable/datatable.module'
+import { LoggerMiddleware } from './middlewares/logger.middleware'
 
 @Module({
   imports: [
@@ -59,9 +61,14 @@ import { SocialModule } from './social/social.module'
     PartnershipModule,
     SearchModule,
     HeadcategoryModule,
-    SocialModule
+    SocialModule,
+    DatatableModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*')
+  }
+}

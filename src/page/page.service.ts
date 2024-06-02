@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreatePageDto } from './dto/create-page.dto'
 import { UpdatePageDto } from './dto/update-page.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -15,6 +15,8 @@ export class PageService {
     @InjectRepository(Headcategory) private headRepo: Repository<Headcategory>
   ) { }
 
+  private logger = new Logger(PageService.name)
+
   async create(createPageDto: CreatePageDto) {
     try {
       const record = await this.repo.save(createPageDto)
@@ -25,6 +27,7 @@ export class PageService {
         message: 'Хуудас нийтлэгдлээ'
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -40,6 +43,7 @@ export class PageService {
         data: records
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: 'Мэдээлэл олдсонгүй'
@@ -89,6 +93,7 @@ export class PageService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -113,6 +118,7 @@ export class PageService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -143,6 +149,7 @@ export class PageService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

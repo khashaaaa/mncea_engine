@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -12,6 +12,8 @@ export class PostService {
 
   constructor(@InjectRepository(Post) private repo: Repository<Post>) { }
 
+  private logger = new Logger(PostService.name)
+
   async create(createPostDto: CreatePostDto) {
 
     try {
@@ -24,6 +26,7 @@ export class PostService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -32,32 +35,92 @@ export class PostService {
   }
 
   async findByPriority(body: any) {
-    const { priority } = body
-    const records = await this.repo.find({ where: { priority } })
-    return {
-      ok: true,
-      data: records
+
+    try {
+      const { priority } = body
+      const records = await this.repo.find({ where: { priority } })
+      return {
+        ok: true,
+        data: records
+      }
+    }
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
     }
   }
 
   async findAll(language: Language) {
-    return await this.repo.find({ where: { language } })
+
+    try {
+      return await this.repo.find({ where: { language } })
+    }
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
+    }
   }
 
   async findAllRegular(language: Language) {
-    return await this.repo.find({ where: { language, priority: Not(Priority.FEATURED) } })
+
+    try {
+      return await this.repo.find({ where: { language, priority: Not(Priority.FEATURED) } })
+    }
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
+    }
   }
 
   async findBase(mark: number) {
-    return await this.repo.find({ where: { base_category: mark } })
+
+    try {
+      return await this.repo.find({ where: { base_category: mark } })
+    }
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
+    }
   }
 
   async findMid(mark: number) {
-    return await this.repo.find({ where: { mid_category: mark } })
+
+    try {
+      return await this.repo.find({ where: { mid_category: mark } })
+    }
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
+    }
   }
 
   async findSub(mark: number) {
-    return await this.repo.find({ where: { sub_category: mark } })
+
+    try {
+      return await this.repo.find({ where: { sub_category: mark } })
+    }
+    catch (error) {
+      this.logger.error(error.message)
+      return {
+        ok: false,
+        message: error.message
+      }
+    }
   }
 
   async findOne(mark: string) {
@@ -78,6 +141,7 @@ export class PostService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -109,6 +173,7 @@ export class PostService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

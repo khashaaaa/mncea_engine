@@ -1,25 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { CreatePartnershipDto } from './dto/create-partnership.dto'
-import { UpdatePartnershipDto } from './dto/update-partnership.dto'
+import { CreateDatatableDto } from './dto/create-datatable.dto'
+import { UpdateDatatableDto } from './dto/update-datatable.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Partnership } from './entities/partnership.entity'
+import { Datatable } from './entities/datatable.entity'
 import { Repository } from 'typeorm'
+import { Language } from 'src/enum/language'
 
 @Injectable()
-export class PartnershipService {
+export class DatatableService {
 
-  constructor(@InjectRepository(Partnership) private repo: Repository<Partnership>) { }
+  constructor(@InjectRepository(Datatable) private repo: Repository<Datatable>) { }
 
-  private logger = new Logger(PartnershipService.name)
+  private logger = new Logger(DatatableService.name)
 
-  async create(createPartnershipDto: CreatePartnershipDto) {
+  async create(createDatatableDto: CreateDatatableDto) {
 
     try {
-      const record = await this.repo.save(createPartnershipDto)
+      const record = await this.repo.save(createDatatableDto)
+
       return {
         ok: true,
         data: record,
-        message: 'Хамтрагч байгууллага нэмэгдлээ'
+        message: 'Амжилттай нэмэгдлээ'
       }
     }
     catch (error) {
@@ -31,25 +33,16 @@ export class PartnershipService {
     }
   }
 
-  async findAll() {
+  async findAll(language: Language) {
+    const records = await this.repo.find({ where: { language } })
 
-    try {
-      const records = await this.repo.find()
-      return {
-        ok: true,
-        data: records
-      }
-    }
-    catch (error) {
-      this.logger.error(error.message)
-      return {
-        ok: false,
-        message: error.message
-      }
+    return {
+      ok: true,
+      data: records
     }
   }
 
-  async findOne(mark: string) {
+  async findOne(mark: number) {
 
     try {
       const record = await this.repo.findOne({ where: { mark } })
@@ -60,6 +53,7 @@ export class PartnershipService {
           message: 'Мэдээлэл олдсонгүй'
         }
       }
+
       return {
         ok: true,
         data: record
@@ -74,7 +68,7 @@ export class PartnershipService {
     }
   }
 
-  async update(mark: string, updatePartnershipDto: UpdatePartnershipDto) {
+  async update(mark: number, updateDatatableDto: UpdateDatatableDto) {
 
     try {
 
@@ -89,7 +83,7 @@ export class PartnershipService {
 
       const updated = await this.repo.save({
         ...exist,
-        ...updatePartnershipDto
+        ...updateDatatableDto
       })
 
       return {
@@ -107,7 +101,7 @@ export class PartnershipService {
     }
   }
 
-  async remove(mark: string) {
+  async remove(mark: number) {
     const delItem = await this.repo.delete(mark)
     if (delItem.affected === 0) {
       return {

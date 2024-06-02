@@ -1,20 +1,26 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreateMidcategoryDto } from './dto/create-midcategory.dto'
 import { UpdateMidcategoryDto } from './dto/update-midcategory.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Midcategory } from './entities/midcategory.entity'
 import { Repository } from 'typeorm'
 import { Language } from 'src/enum/language'
+import { Subcategory } from 'src/subcategory/entities/subcategory.entity'
 
 @Injectable()
 export class MidcategoryService {
 
-  constructor(@InjectRepository(Midcategory) private repo: Repository<Midcategory>) { }
+  constructor(
+    @InjectRepository(Midcategory) private midCategoryRepo: Repository<Midcategory>,
+    @InjectRepository(Subcategory) private subCategoryRepo: Repository<Subcategory>
+  ) { }
+
+  private logger = new Logger(MidcategoryService.name)
 
   async create(createMidcategoryDto: CreateMidcategoryDto) {
 
     try {
-      const lastRecord = await this.repo.find({
+      const lastRecord = await this.midCategoryRepo.find({
         order: { order: 'DESC' },
         take: 1
       })
@@ -26,7 +32,7 @@ export class MidcategoryService {
 
       createMidcategoryDto.order = nextIncrementValue
 
-      const data = await this.repo.save(createMidcategoryDto)
+      const data = await this.midCategoryRepo.save(createMidcategoryDto)
 
       return {
         ok: true,
@@ -34,6 +40,7 @@ export class MidcategoryService {
         message: 'Цэс нэмэгдлээ'
       }
     } catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -42,13 +49,13 @@ export class MidcategoryService {
   }
 
   async findAll(language: Language) {
-    return await this.repo.find({ where: { language }, order: { order: 'ASC' } })
+    return await this.midCategoryRepo.find({ where: { language }, order: { order: 'ASC' } })
   }
 
   async findOne(mark: number) {
 
     try {
-      const exist = await this.repo.findOne({ where: { mark } })
+      const exist = await this.midCategoryRepo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -63,6 +70,7 @@ export class MidcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -73,7 +81,7 @@ export class MidcategoryService {
   async update(mark: number, updateMidcategoryDto: UpdateMidcategoryDto) {
 
     try {
-      const exist = await this.repo.findOne({ where: { mark } })
+      const exist = await this.midCategoryRepo.findOne({ where: { mark } })
 
       if (!exist) {
         return {
@@ -82,7 +90,7 @@ export class MidcategoryService {
         }
       }
 
-      const updated = await this.repo.save({
+      const updated = await this.midCategoryRepo.save({
         ...exist,
         ...updateMidcategoryDto
       })
@@ -94,6 +102,7 @@ export class MidcategoryService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -102,16 +111,18 @@ export class MidcategoryService {
   }
 
   async remove(mark: number) {
-    const delItem = await this.repo.delete(mark)
+    await this.subCategoryRepo.delete({ parent: mark })
+    const delItem = await this.midCategoryRepo.delete(mark)
+
     if (delItem.affected === 0) {
       return {
         ok: false,
         message: 'Мэдээлэл олдсонгүй'
       }
     }
+
     return {
       ok: true,
-      data: delItem,
       message: 'Мэдээлэл устгагдлаа'
     }
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreateCompliantDto } from './dto/create-compliant.dto'
 import { UpdateCompliantDto } from './dto/update-compliant.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -9,6 +9,8 @@ import { Repository } from 'typeorm'
 export class CompliantService {
 
   constructor(@InjectRepository(Compliant) private repo: Repository<Compliant>) { }
+
+  private logger = new Logger(CompliantService.name)
 
   async create(createCompliantDto: CreateCompliantDto) {
 
@@ -21,6 +23,7 @@ export class CompliantService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -67,6 +70,7 @@ export class CompliantService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { CreateSocialDto } from './dto/create-social.dto'
 import { UpdateSocialDto } from './dto/update-social.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -9,6 +9,8 @@ import { Repository } from 'typeorm'
 export class SocialService {
 
   constructor(@InjectRepository(Social) private repo: Repository<Social>) { }
+
+  private logger = new Logger(SocialService.name)
 
   async create(createSocialDto: CreateSocialDto) {
     try {
@@ -21,6 +23,7 @@ export class SocialService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -54,6 +57,7 @@ export class SocialService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message
@@ -85,6 +89,7 @@ export class SocialService {
       }
     }
     catch (error) {
+      this.logger.error(error.message)
       return {
         ok: false,
         message: error.message

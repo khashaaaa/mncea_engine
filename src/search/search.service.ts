@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { Repository, ILike } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Post } from '../post/entities/post.entity'
@@ -11,6 +11,8 @@ export class SearchService {
         @InjectRepository(Post) private postRepo: Repository<Post>,
         @InjectRepository(Page) private pageRepo: Repository<Page>
     ) { }
+
+    private logger = new Logger(SearchService.name)
 
     async search(keyword: string) {
         try {
@@ -31,7 +33,11 @@ export class SearchService {
                 }
             }
         } catch (error) {
-            console.error(error.message)
+            this.logger.error(error.message)
+            return {
+                ok: false,
+                message: error.message
+            }
         }
     }
 }
