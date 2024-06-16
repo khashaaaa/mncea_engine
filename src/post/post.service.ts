@@ -37,8 +37,8 @@ export class PostService {
   async findByPriority(body: any) {
 
     try {
-      const { priority } = body
-      const records = await this.repo.find({ where: { priority } })
+      const { priority, language } = body
+      const records = await this.repo.find({ where: { priority, language } })
       return {
         ok: true,
         data: records
@@ -81,10 +81,12 @@ export class PostService {
     }
   }
 
-  async findBase(mark: number) {
+  async findBase(body: any) {
+
+    const { mark, language } = body
 
     try {
-      return await this.repo.find({ where: { base_category: mark } })
+      return await this.repo.find({ where: { base_category: mark, language } })
     }
     catch (error) {
       this.logger.error(error.message)
@@ -95,10 +97,12 @@ export class PostService {
     }
   }
 
-  async findMid(mark: number) {
+  async findMid(body: any) {
+
+    const { mark, language } = body
 
     try {
-      return await this.repo.find({ where: { mid_category: mark } })
+      return await this.repo.find({ where: { mid_category: mark, language } })
     }
     catch (error) {
       this.logger.error(error.message)
@@ -109,10 +113,12 @@ export class PostService {
     }
   }
 
-  async findSub(mark: number) {
+  async findSub(body: any) {
+
+    const { mark, language } = body
 
     try {
-      return await this.repo.find({ where: { sub_category: mark } })
+      return await this.repo.find({ where: { sub_category: mark, language } })
     }
     catch (error) {
       this.logger.error(error.message)
@@ -123,10 +129,12 @@ export class PostService {
     }
   }
 
-  async findOne(mark: string) {
+  async findOne(body: any) {
+
+    const { mark, language } = body
 
     try {
-      const exist = await this.repo.findOne({ where: { mark } })
+      const exist = await this.repo.findOne({ where: { mark, language } })
 
       if (!exist) {
         return {

@@ -121,24 +121,24 @@ export class PostController {
     return await this.postService.findAllRegular(language)
   }
 
-  @Get('base/:mark')
-  async findBase(@Param('mark') mark: number) {
-    return await this.postService.findBase(mark)
+  @Post('base')
+  async findBase(@Body() body: any) {
+    return await this.postService.findBase(body)
   }
 
-  @Get('mid/:mark')
-  async findMid(@Param('mark') mark: number) {
-    return await this.postService.findMid(mark)
+  @Post('mid')
+  async findMid(@Body() body: any) {
+    return await this.postService.findMid(body)
   }
 
-  @Get('sub/:mark')
-  async findSub(@Param('mark') mark: number) {
-    return await this.postService.findSub(mark)
+  @Post('sub')
+  async findSub(@Body() body: any) {
+    return await this.postService.findSub(body)
   }
 
-  @Get(':mark')
-  async findOne(@Param('mark') mark: string) {
-    return await this.postService.findOne(mark)
+  @Post('single')
+  async findOne(@Body() body: any) {
+    return await this.postService.findOne(body)
   }
 
   @Patch(':mark/edit')
