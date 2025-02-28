@@ -37,7 +37,10 @@ import { LoggerMiddleware } from './middlewares/logger.middleware'
         password: cs.get<string>('PG_PWD'),
         database: cs.get('PG_NAME'),
         synchronize: true,
-        autoLoadEntities: true
+        autoLoadEntities: true,
+        ssl: {
+          rejectUnauthorized: false
+        }
       })
     }),
     JwtModule.registerAsync({
